@@ -34,7 +34,7 @@ public class UsersController : Controller
 
     [HttpPost]
     [Produces("application/json", "application/xml")]
-    public IActionResult CreateUser([FromBody] CreateUserResponse user)
+    public IActionResult CreateUser([FromBody] CreateUserRequest user)
     {
         if (user == null)
             return BadRequest();
@@ -43,17 +43,44 @@ public class UsersController : Controller
         {
             if (user.Login.Any(letter => !char.IsLetterOrDigit(letter)))
             {
-                ModelState.AddModelError("login", "Login should contain only letter or digit");
+                ModelState.AddModelError("login", "Login should contain only letters or digits");
             }
         }
         if (!ModelState.IsValid)
             return UnprocessableEntity(ModelState);
         
-        var userEntity = mapper.Map<CreateUserResponse, UserEntity>(user);
+        var userEntity = mapper.Map<CreateUserRequest, UserEntity>(user);
         var result = userRepository.Insert(userEntity);
         return CreatedAtRoute(
             nameof(GetUserById),
             new { userId = result.Id },
-            result);
+             result.Id);
+    }
+
+    [HttpPut("{userId}")]
+    [Produces("application/json", "application/xml")]
+    public IActionResult UpsertUser(
+        string userId, 
+        [FromBody] UpsertUserRequest user)
+    {
+        if (user == null || !Guid.TryParse(userId, out Guid userGuid))
+            return BadRequest();
+        
+        if (!ModelState.IsValid)
+            return UnprocessableEntity(ModelState);
+
+        var userEntity = new UserEntity(userGuid);
+        mapper.Map(user, userEntity);
+
+        bool result;
+        userRepository.UpdateOrInsert(userEntity, out result);
+
+        if (result)
+            return CreatedAtRoute(
+                nameof(GetUserById),
+                new { userId = userId },
+                userId);
+        
+        return NoContent();
     }
 }

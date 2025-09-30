@@ -28,7 +28,10 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.CreateMap<UserEntity, UserDto>()
         .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.LastName} {src.FirstName}"));
 
-    cfg.CreateMap<CreateUserResponse, UserEntity>();
+    cfg.CreateMap<CreateUserRequest, UserEntity>();
+
+    cfg.CreateMap<UpsertUserRequest, UserEntity>();
+    
 }, new System.Reflection.Assembly[0]);
 
 builder.Services.AddSingleton<IUserRepository, InMemoryUserRepository>();

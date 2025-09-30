@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace WebApi.MinimalApi.Models.Requests;
 
-public class CreateUserResponse
+public class CreateUserRequest
 {
     [Required]
     public string Login { get; set; }
