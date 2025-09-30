@@ -33,14 +33,21 @@ public class UsersController : Controller
     }
 
     [HttpPost]
-    [Consumes("application/json", "application/xml")]
+    [Produces("application/json", "application/xml")]
     public IActionResult CreateUser([FromBody] CreateUserResponse user)
     {
         if (user == null)
             return BadRequest();
+
+        if (!(user.Login == null))
+        {
+            if (user.Login.Any(letter => !char.IsLetterOrDigit(letter)))
+            {
+                ModelState.AddModelError("login", "Login should contain only letter or digit");
+            }
+        }
         if (!ModelState.IsValid)
             return UnprocessableEntity(ModelState);
-            
         
         var userEntity = mapper.Map<CreateUserResponse, UserEntity>(user);
         var result = userRepository.Insert(userEntity);
