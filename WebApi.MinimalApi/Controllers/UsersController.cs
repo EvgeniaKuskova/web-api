@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.MinimalApi.Domain;
 using WebApi.MinimalApi.Models;
@@ -20,6 +20,7 @@ public class UsersController : Controller
     }
 
     [HttpGet("{userId}", Name = nameof(GetUserById))]
+    [HttpHead("{userId}")]
     [Produces("application/json", "application/xml")]
     public ActionResult<UserDto> GetUserById([FromRoute] Guid userId)
     {
@@ -28,6 +29,12 @@ public class UsersController : Controller
             return NotFound();
 
         var response = mapper.Map<UserEntity, UserDto>(user);
+
+        if (HttpMethods.IsHead(Request.Method))
+        {
+            Response.ContentType = "application/json; charset=utf-8";
+            return StatusCode(200);
+        }
 
         return Ok(response);
     }
