@@ -114,4 +114,12 @@ public class UsersController : Controller
         Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(paginationHeader));
         return Ok(users);
     }
+
+    [HttpOptions("/api/users", Name = nameof(OptionsUsers))]
+    [Produces("application/json", "application/xml")]
+    public ActionResult<UserDto> OptionsUsers()
+    {
+        Response.Headers.Add("Allow", "GET, POST, OPTIONS");
+        return StatusCode(200);
+    }
 }
