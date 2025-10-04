@@ -31,6 +31,7 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.CreateMap<CreateUserRequest, UserEntity>();
 
     cfg.CreateMap<UpsertUserRequest, UserEntity>();
+    cfg.CreateMap<UserEntity, UpsertUserRequest>();
     
 }, new System.Reflection.Assembly[0]);
 
