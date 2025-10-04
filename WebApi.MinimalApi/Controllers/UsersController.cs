@@ -132,6 +132,22 @@ public class UsersController : Controller
 
         return NoContent();
     }
+        
+    [HttpDelete("{userId}")]
+    [Produces("application/json", "application/xml")]
+    public IActionResult DeleteUser(string userId)
+    {
+        if (!Guid.TryParse(userId, out var userGuid))
+            return NotFound();
+
+        var user = userRepository.FindById(userGuid);
+        if (user is null)
+            return NotFound();
+        
+        userRepository.Delete(userGuid);
+        
+        return NoContent();
+    }
 
     [HttpGet("/api/users", Name = nameof(GetUsers))]
     [Produces("application/json", "application/xml")]
