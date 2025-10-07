@@ -4,6 +4,7 @@ using Newtonsoft.Json.Serialization;
 using WebApi.MinimalApi.Domain;
 using WebApi.MinimalApi.Models;
 using WebApi.MinimalApi.Models.Requests;
+using WebApi.MinimalApi.Samples;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://localhost:5000");
@@ -36,8 +37,10 @@ builder.Services.AddAutoMapper(cfg =>
 }, new System.Reflection.Assembly[0]);
 
 builder.Services.AddSingleton<IUserRepository, InMemoryUserRepository>();
+builder.Services.AddSwaggerGeneration();
+
 var app = builder.Build();
 
 app.MapControllers();
-
+app.UseSwaggerWithUI();
 app.Run();
